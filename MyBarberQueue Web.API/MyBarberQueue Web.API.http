@@ -1,0 +1,6 @@
+@MyBarberQueue_Web.API_HostAddress = http://localhost:5082
+
+GET {{MyBarberQueue_Web.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
