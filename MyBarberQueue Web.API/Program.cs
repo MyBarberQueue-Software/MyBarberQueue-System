@@ -13,7 +13,6 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-// These lines make Swagger UI accessible without any authentication
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
