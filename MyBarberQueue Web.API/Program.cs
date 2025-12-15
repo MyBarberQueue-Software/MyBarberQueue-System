@@ -1,6 +1,8 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+// Add this using directive
+using Microsoft.EntityFrameworkCore;
+using MyBarberQueue_Web.API.Data;
+using MyBarberQueue_Web.API.Mappings;
+using MyBarberQueue_Web.API.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Injection Connection String and DbContext
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Injecting Respositories
+builder.Services.AddScoped<IShopRepository, SqlShopRepository>();
+
+// Inject autoMapper
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -17,7 +29,7 @@ app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     // Optional: set Swagger UI as the app's root page
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyBarberQueue V1 API");
     // c.RoutePrefix = string.Empty; 
 });
 
