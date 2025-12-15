@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyBarberQueue_Web.API.Data;
 using MyBarberQueue_Web.API.Model.Domain;
@@ -13,33 +14,21 @@ namespace MyBarberQueue_Web.API.Controllers
     {
         private readonly AppDbContext dbContext;
         private readonly IShopRepository shopRepository;
+        private readonly IMapper mapper;
 
-        public ShopController(AppDbContext dbContext, IShopRepository shopRepository)
+        public ShopController(AppDbContext dbContext, IShopRepository shopRepository, IMapper mapper)
         {
             this.dbContext = dbContext;
             this.shopRepository = shopRepository;
+            this.mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllShop()
         {
-            var shopsDomain = await shopRepository.GetAllAsync();
+           var shopsDomain = await shopRepository.GetAllAsync();
 
-            var shopDto = new List<ShopDto>();
-
-            foreach (var shop in shopsDomain)
-            {
-                shopDto.Add(new ShopDto
-                {
-                    Id = shop.Id,
-                    Name = shop.Name,
-                    PhoneNumber = shop.PhoneNumber,
-                    Address = shop.Address,
-                    City = shop.City,
-                    IsActive = shop.IsActive
-                });
-            }
-
+           var shopDto = mapper.Map<List<ShopDto>>(shopsDomain);
 
             return Ok(new
             {
@@ -47,6 +36,7 @@ namespace MyBarberQueue_Web.API.Controllers
                 data = shopDto
             });
         }
+
 
         [HttpGet]
         [Route("{id:guid}")]
@@ -58,15 +48,8 @@ namespace MyBarberQueue_Web.API.Controllers
             {
                 return NotFound();
             }
-            var shopDto = new ShopDto
-            {
-                Id = shopDomain.Id,
-                Name = shopDomain.Name,
-                PhoneNumber = shopDomain.PhoneNumber,
-                Address = shopDomain.Address,
-                City = shopDomain.City,
-                IsActive = shopDomain.IsActive
-            };
+            var shopDto = mapper.Map<ShopDto>(shopDomain);
+
             return Ok(new
             {
                 message = "Shop retrieved successfully",
@@ -78,27 +61,12 @@ namespace MyBarberQueue_Web.API.Controllers
         [HttpPost]
         public async Task<IActionResult> AddShop([FromBody] AddShopRequestDto addShopRequestDto)
         {
-            var shopDomain = new Shop
-            {
-                Id = Guid.NewGuid(),
-                Name = addShopRequestDto.Name,
-                PhoneNumber = addShopRequestDto.PhoneNumber,
-                Address = addShopRequestDto.Address,
-                City = addShopRequestDto.City,
-                IsActive = addShopRequestDto.IsActive
-            };
+            var shopDomain = mapper.Map<Shop>(addShopRequestDto);
 
             shopDomain = await shopRepository.CreateAsync(shopDomain);
 
-            var shopDto = new ShopDto
-            {
-                Id = shopDomain.Id,
-                Name = shopDomain.Name,
-                PhoneNumber = shopDomain.PhoneNumber,
-                Address = shopDomain.Address,
-                City = shopDomain.City,
-                IsActive = shopDomain.IsActive
-            };
+            var shopDto = mapper.Map<ShopDto>(shopDomain);
+
             return CreatedAtAction(nameof(GetShopById), new { id = shopDto.Id }, new
             {
                 message = "Shop added successfully",
@@ -110,29 +78,15 @@ namespace MyBarberQueue_Web.API.Controllers
         [Route("{id:guid}")]
         public async Task<IActionResult> UpdateShop([FromRoute] Guid id, [FromBody] UpdateShopRequestDto updateShopRequestDto)
         {
-            var shopDomain = new Shop
-            {
-                Name = updateShopRequestDto.Name,
-                PhoneNumber = updateShopRequestDto.PhoneNumber,
-                Address = updateShopRequestDto.Address,
-                City = updateShopRequestDto.City,
-                IsActive = updateShopRequestDto.IsActive
-            };
+            var shopDomain = mapper.Map<Shop>(updateShopRequestDto);
+
             shopDomain = await shopRepository.UpdateAsync(id, shopDomain);
 
             if (shopDomain == null)
             {
                 return NotFound();
             }
-            var shopDto = new ShopDto
-            {
-                Id = shopDomain.Id,
-                Name = shopDomain.Name,
-                PhoneNumber = shopDomain.PhoneNumber,
-                Address = shopDomain.Address,
-                City = shopDomain.City,
-                IsActive = shopDomain.IsActive
-            };
+            var shopDto = mapper.Map<ShopDto>(shopDomain);
             return Ok(new
             {
                 message = "Shop updated successfully",
@@ -150,15 +104,7 @@ namespace MyBarberQueue_Web.API.Controllers
             {
                 return NotFound();
             }
-            var shopDto = new ShopDto
-            {
-                Id = shopDomain.Id,
-                Name = shopDomain.Name,
-                PhoneNumber = shopDomain.PhoneNumber,
-                Address = shopDomain.Address,
-                City = shopDomain.City,
-                IsActive = shopDomain.IsActive
-            };
+            var shopDto = mapper.Map<ShopDto>(shopDomain);
             return Ok(new
             {
                 message = "Shop deleted successfully",

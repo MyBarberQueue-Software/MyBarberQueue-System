@@ -1,8 +1,7 @@
-using Microsoft.AspNetCore.Builder;
+// Add this using directive
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using MyBarberQueue_Web.API.Data;
+using MyBarberQueue_Web.API.Mappings;
 using MyBarberQueue_Web.API.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +18,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Injecting Respositories
 builder.Services.AddScoped<IShopRepository, SqlShopRepository>();
+
+// Inject autoMapper
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 var app = builder.Build();
 
