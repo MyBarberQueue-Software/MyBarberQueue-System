@@ -18,6 +18,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Injecting Respositories
 builder.Services.AddScoped<IShopRepository, SqlShopRepository>();
+builder.Services.AddScoped<IDeviceRepository, SqlDeviceRepository>();
 
 // Inject autoMapper
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));

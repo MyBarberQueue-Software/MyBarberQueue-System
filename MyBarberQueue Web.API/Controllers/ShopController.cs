@@ -10,18 +10,11 @@ namespace MyBarberQueue_Web.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ShopController : ControllerBase
+    public class ShopController(AppDbContext dbContext, IShopRepository shopRepository, IMapper mapper) : ControllerBase
     {
-        private readonly AppDbContext dbContext;
-        private readonly IShopRepository shopRepository;
-        private readonly IMapper mapper;
-
-        public ShopController(AppDbContext dbContext, IShopRepository shopRepository, IMapper mapper)
-        {
-            this.dbContext = dbContext;
-            this.shopRepository = shopRepository;
-            this.mapper = mapper;
-        }
+        private readonly AppDbContext dbContext = dbContext;
+        private readonly IShopRepository shopRepository = shopRepository;
+        private readonly IMapper mapper = mapper;
 
         [HttpGet]
         public async Task<IActionResult> GetAllShop()
@@ -36,7 +29,6 @@ namespace MyBarberQueue_Web.API.Controllers
                 data = shopDto
             });
         }
-
 
         [HttpGet]
         [Route("{id:guid}")]
