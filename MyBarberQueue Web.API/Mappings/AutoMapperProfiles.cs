@@ -13,7 +13,9 @@ namespace MyBarberQueue_Web.API.Mappings
             CreateMap<UpdateShopRequestDto,Shop>().ReverseMap();
 
             CreateMap<Device,DeviceDto>().ReverseMap();
-
+            CreateMap<AddDeviceRequestDto,Device>().ReverseMap();
+            CreateMap<UpdateDeviceRequestDto,Device>().ReverseMap(); 
+            
 
         }
     }
