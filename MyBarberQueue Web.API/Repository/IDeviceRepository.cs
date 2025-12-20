@@ -12,4 +12,3 @@ namespace MyBarberQueue_Web.API.Repository
 
     }
 }
-
