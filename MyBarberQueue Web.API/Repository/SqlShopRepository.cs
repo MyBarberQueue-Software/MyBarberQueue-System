@@ -4,14 +4,10 @@ using MyBarberQueue_Web.API.Model.Domain;
 
 namespace MyBarberQueue_Web.API.Repository
 {
-    public class SqlShopRepository : IShopRepository
+    public class SqlShopRepository(AppDbContext dbContext) : IShopRepository
     {
-        private readonly AppDbContext dbContext;
+        private readonly AppDbContext dbContext = dbContext;
 
-        public SqlShopRepository(AppDbContext dbContext)
-        {
-            this.dbContext = dbContext;
-        }
         public async Task<List<Shop>> GetAllAsync()
         {
             var shopsDomain = dbContext.Shops.ToListAsync();
@@ -67,5 +63,7 @@ namespace MyBarberQueue_Web.API.Repository
             await dbContext.SaveChangesAsync();
             return existingShop;
         }
+
+
     }
 }
