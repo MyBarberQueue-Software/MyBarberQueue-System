@@ -62,6 +62,7 @@ namespace MyBarberQueue_Web.API.Controllers
             });
         }
         [HttpPut]
+        [Route("{id:guid}")]
         public async Task<IActionResult> UpdateDevice([FromRoute] Guid id, [FromBody] UpdateDeviceRequestDto updateDeviceRequestDto)
         {
             var deviceDomain = mapper.Map<Device>(updateDeviceRequestDto);
@@ -80,7 +81,8 @@ namespace MyBarberQueue_Web.API.Controllers
                 data = deviceDto
             });
         }
-
+        [HttpDelete]
+        [Route("{id:guid}")]
         public async Task<IActionResult> DeleteDevice([FromRoute] Guid id)
         {
             var deviceDomain = await deviceRepository.DeleteAsync(id);
