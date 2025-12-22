@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyBarberQueue_Web.API.Data;
@@ -10,6 +11,8 @@ namespace MyBarberQueue_Web.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
+    [Authorize(Roles = "Admin,Reader")]
     public class QueueController(IQueueRepository queueRepository, IMapper mapper) : ControllerBase
     {
        [HttpGet]
@@ -32,6 +35,7 @@ namespace MyBarberQueue_Web.API.Controllers
         }
         [HttpGet]
         [Route("{id:guid}")]
+        [Authorize(Roles = "Admin,Reader")]
         public async Task<IActionResult> GetQueueByIdAsync([FromRoute] Guid id)
         {
             var queueDomain = await queueRepository.GetByIdAsync(id);
@@ -47,6 +51,7 @@ namespace MyBarberQueue_Web.API.Controllers
             });
         }  
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddQueueAsync([FromBody] AddQueueRequestDto addQueueRequestDto)
         {
             var queueDomain = mapper.Map<Queue>(addQueueRequestDto);
@@ -60,6 +65,7 @@ namespace MyBarberQueue_Web.API.Controllers
         }
         [HttpPut]
         [Route("{id:guid}")]
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> UpdateQueueAsync([FromRoute] Guid id, [FromBody] UpdateQueueRequestDto updateQueueRequestDto)
         {
             var queueDomain = mapper.Map<Queue>(updateQueueRequestDto);
@@ -77,6 +83,7 @@ namespace MyBarberQueue_Web.API.Controllers
         }
         [HttpDelete]
         [Route("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteQueueAsync([FromRoute] Guid id)
         {
             var queueDomain = await queueRepository.DeleteAsync(id);
@@ -91,8 +98,5 @@ namespace MyBarberQueue_Web.API.Controllers
                 data = queueDto
             });
         }
-
-
-
     }
 }

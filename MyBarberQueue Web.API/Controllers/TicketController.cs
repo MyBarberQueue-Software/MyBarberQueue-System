@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyBarberQueue_Web.API.Model.Domain;
@@ -9,6 +10,7 @@ namespace MyBarberQueue_Web.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TicketController(ITicketRepository ticketRepository, IMapper mapper) : ControllerBase
     {
         private readonly ITicketRepository ticketRepository = ticketRepository;
@@ -16,6 +18,7 @@ namespace MyBarberQueue_Web.API.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles = "Admin,Reader")]
         public async Task<IActionResult> GetAllTicketsAsync()
         {
             var ticketsDomain = await ticketRepository.GetAllAsync();
@@ -34,6 +37,7 @@ namespace MyBarberQueue_Web.API.Controllers
 
         [HttpGet]
         [Route("{id:guid}")]
+        [Authorize(Roles = "Admin,Reader")]
         public async Task<IActionResult> GetTicketByIdAsync([FromRoute] Guid id)
         {
             var ticketDomain = await ticketRepository.GetByIdAsync(id);
@@ -51,6 +55,7 @@ namespace MyBarberQueue_Web.API.Controllers
         }
         
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddTicketAsync([FromBody] AddTicketRequestDto addTicketRequestDto)
         {
             var ticketDomain = mapper.Map<Ticket>(addTicketRequestDto);
@@ -64,6 +69,7 @@ namespace MyBarberQueue_Web.API.Controllers
         }
         [HttpPut]
         [Route("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateTicketAsync([FromRoute] Guid id, [FromBody] UpdateTicketRequestDto updateTicketRequestDto)
         {
             var ticketDomain = mapper.Map<Ticket>(updateTicketRequestDto);
@@ -82,6 +88,7 @@ namespace MyBarberQueue_Web.API.Controllers
 
         [HttpDelete]
         [Route("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteTicketAsync([FromRoute] Guid id)
         {
             var ticketDomain = await ticketRepository.DeleteAsync(id);

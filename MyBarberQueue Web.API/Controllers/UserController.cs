@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyBarberQueue_Web.API.Model.Domain;
@@ -9,12 +10,14 @@ namespace MyBarberQueue_Web.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+   
     public class UserController(IUserRepository IUserRepository, IMapper mapper) : ControllerBase
     {
         private readonly IUserRepository iUserRepository = IUserRepository;
         private readonly IMapper mapper = mapper;
 
         [HttpGet]
+        [Authorize(Roles = "Admin,Reader")]
         public async Task<IActionResult> GetAllUsersAsync()
         {
             var usersDomain = await iUserRepository.GetAllAsync();
@@ -31,6 +34,7 @@ namespace MyBarberQueue_Web.API.Controllers
         }
         [HttpGet]
         [Route("{id:guid}")]
+        [Authorize(Roles = "Admin,Reader")]
         public async Task<IActionResult> GetUserByIdAsync([FromRoute] Guid id)
         {
             var userDomain = await iUserRepository.GetByIdAsync(id);
@@ -47,6 +51,7 @@ namespace MyBarberQueue_Web.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddUserAsync([FromBody] AddUserRequestDto addUserRequestDto)
         {
             var userDomain = mapper.Map<User>(addUserRequestDto);
@@ -61,6 +66,7 @@ namespace MyBarberQueue_Web.API.Controllers
 
         [HttpPut]
         [Route("{id:guid}")]
+        [Authorize(Roles = "Admins")]
         public async Task<IActionResult> UpdateUserAsync([FromRoute] Guid id, [FromBody] UpdateUserRequestDto updateUserRequestDto)
         {
             var userDomain = mapper.Map<User>(updateUserRequestDto);
@@ -79,7 +85,7 @@ namespace MyBarberQueue_Web.API.Controllers
 
         [HttpDelete]
         [Route("{id:guid}")]
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUserAsync([FromRoute] Guid id)
         {
             var userDomain = await iUserRepository.DeleteAsync(id);

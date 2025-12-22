@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyBarberQueue_Web.API.Data;
@@ -10,6 +11,7 @@ namespace MyBarberQueue_Web.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class ShopController(AppDbContext dbContext, IShopRepository shopRepository, IMapper mapper) : ControllerBase
     {
         private readonly AppDbContext dbContext = dbContext;
@@ -17,6 +19,7 @@ namespace MyBarberQueue_Web.API.Controllers
         private readonly IMapper mapper = mapper;
 
         [HttpGet]
+        [Authorize(Roles = "Admin,Roles")]
         public async Task<IActionResult> GetAllShop()
         {
            var shopsDomain = await shopRepository.GetAllAsync();
@@ -32,6 +35,7 @@ namespace MyBarberQueue_Web.API.Controllers
 
         [HttpGet]
         [Route("{id:guid}")]
+        [Authorize(Roles = "Admin,Reader")]
         public async Task<IActionResult> GetShopById([FromRoute] Guid id)
         {
             var shopDomain = await shopRepository.GetByIdAsync(id);
@@ -51,6 +55,7 @@ namespace MyBarberQueue_Web.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddShop([FromBody] AddShopRequestDto addShopRequestDto)
         {
             var shopDomain = mapper.Map<Shop>(addShopRequestDto);
@@ -68,6 +73,7 @@ namespace MyBarberQueue_Web.API.Controllers
 
         [HttpPut]
         [Route("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateShop([FromRoute] Guid id, [FromBody] UpdateShopRequestDto updateShopRequestDto)
         {
             var shopDomain = mapper.Map<Shop>(updateShopRequestDto);
@@ -89,6 +95,7 @@ namespace MyBarberQueue_Web.API.Controllers
 
         [HttpDelete]
         [Route("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteShop([FromRoute] Guid id)
         {
             var shopDomain = await shopRepository.DeleteAsync(id);

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyBarberQueue_Web.API.Data;
@@ -10,6 +11,7 @@ namespace MyBarberQueue_Web.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class DeviceController(AppDbContext dbContext, IDeviceRepository deviceRepository, IMapper mapper) : ControllerBase
     {
         private readonly AppDbContext dbContext = dbContext;
@@ -17,6 +19,7 @@ namespace MyBarberQueue_Web.API.Controllers
         private readonly IMapper mapper = mapper;
 
         [HttpGet]
+        [Authorize (Roles = "Admin,Reader")]
         public async Task<IActionResult> GetAllDevice()
         {
             var devicesDomain = await deviceRepository.GetAllAsync();
@@ -31,6 +34,7 @@ namespace MyBarberQueue_Web.API.Controllers
 
         [HttpGet]
         [Route("{id:guid}")]
+        [Authorize(Roles = "Admin,Reader")]
         public async Task<IActionResult> GetDeviceById([FromRoute] Guid id)
         {
             var deviceDomain = await deviceRepository.GetByIdAsync(id);
@@ -50,6 +54,7 @@ namespace MyBarberQueue_Web.API.Controllers
         }   
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddDevice([FromBody] AddDeviceRequestDto addDeviceRequestDto)
         {
             var deviceDomain = mapper.Map<Device>(addDeviceRequestDto);
@@ -63,6 +68,7 @@ namespace MyBarberQueue_Web.API.Controllers
         }
         [HttpPut]
         [Route("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateDevice([FromRoute] Guid id, [FromBody] UpdateDeviceRequestDto updateDeviceRequestDto)
         {
             var deviceDomain = mapper.Map<Device>(updateDeviceRequestDto);
@@ -83,6 +89,7 @@ namespace MyBarberQueue_Web.API.Controllers
         }
         [HttpDelete]
         [Route("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteDevice([FromRoute] Guid id)
         {
             var deviceDomain = await deviceRepository.DeleteAsync(id);
